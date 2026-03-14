@@ -1,0 +1,460 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Dynamic Mesh Gradient Base Colors */
+  --bg-dark: #050505;
+  --bg-mesh-1: #1e1b4b; /* Deep Indigo */
+  --bg-mesh-2: #0f172a; /* Slate Dark */
+  --bg-mesh-3: #2e1065; /* Deep Purple */
+
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+
+  --accent-primary: #6366f1; /* Indigo 500 */
+  --accent-hover: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.5);
+
+  --status-available: #10b981; /* Emerald */
+  --status-occupied: #f43f5e; /* Rose */
+  --status-booked: #f59e0b;  /* Amber */
+  --status-fined: #f97316;   /* Orange */
+
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+
+  /* Previously missing variables — now defined */
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
+.blueprint-theme {
+  --status-available: #00f2ff; /* Neon Cyan */
+  --status-occupied: #ff2d55;  /* Neon Rose */
+  --status-booked: #7000ff;    /* Neon Violet */
+  --status-fined: #ff9d00;     /* Neon Orange */
+  --accent-primary: #00f2ff;
+  --accent-glow: rgba(0, 242, 255, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: #020617; /* Deeper Slate Black */
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+
+  /* Modern High-Tech Geometric Background */
+  background-image:
+    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.03) 1px, transparent 0),
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(30, 27, 75, 0.2), transparent 40%);
+  background-size: 32px 32px, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* Page Entrance Reveal */
+@keyframes reveal {
+  from { opacity: 0; filter: blur(10px); scale: 0.98; }
+  to   { opacity: 1; filter: blur(0);    scale: 1;    }
+}
+
+main > div {
+  animation: reveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Neon Interaction Wrappers */
+.cyber-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(45deg, transparent 50%, rgba(99, 102, 241, 0.03) 100%);
+  pointer-events: none;
+}
+
+.cyber-border-neon {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1), inset 0 0 10px rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* ─── Typography ───────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.text-sm  { font-size: 0.875rem; }
+.text-xs  { font-size: 0.75rem; }
+.text-muted     { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+
+/* Previously missing — now defined */
+.text-accent { color: var(--accent-primary); }
+
+/* ─── Layout ────────────────────────────────────────────────────── */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+.grid            { display: grid; }
+.flex            { display: flex; }
+.items-center    { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center  { justify-content: center; }
+.flex-col        { flex-direction: column; }
+.gap-2  { gap: 0.5rem; }
+.gap-4  { gap: 1rem; }
+.gap-6  { gap: 1.5rem; }
+
+/* ─── Glassmorphism ─────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+  padding: 1.75rem;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4), var(--glass-highlight);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ─── Badges ────────────────────────────────────────────────────── */
+.badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+}
+
+/* Single definition per badge variant (removed duplicate badge-all) */
+.badge-all      { background: rgba(0, 242, 255, 0.05);   color: #00f2ff;                  border: 1px solid rgba(0, 242, 255, 0.2); }
+.badge-available{ background: rgba(16, 185, 129, 0.05);  color: var(--status-available);  border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge-occupied { background: rgba(244, 63, 94, 0.05);   color: var(--status-occupied);   border: 1px solid rgba(244, 63, 94, 0.2); }
+.badge-booked   { background: rgba(245, 158, 11, 0.05);  color: var(--status-booked);     border: 1px solid rgba(245, 158, 11, 0.2); }
+.badge-fined    { background: rgba(249, 115, 22, 0.05);  color: var(--status-fined);      border: 1px solid rgba(249, 115, 22, 0.2); }
+
+/* Active Selection States */
+.badge.active.badge-all      { background: rgba(0, 242, 255, 0.3);   border-color: #00f2ff;                 color: #fff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); }
+.badge.active.badge-available{ background: rgba(16, 185, 129, 0.3);  border-color: var(--status-available); color: #fff; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+.badge.active.badge-occupied { background: rgba(244, 63, 94, 0.3);   border-color: var(--status-occupied);  color: #fff; box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
+.badge.active.badge-booked   { background: rgba(245, 158, 11, 0.3);  border-color: var(--status-booked);   color: #fff; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+.badge.active.badge-fined    { background: rgba(249, 115, 22, 0.3);  border-color: var(--status-fined);    color: #fff; box-shadow: 0 0 15px rgba(249, 115, 22, 0.3); }
+
+/* ─── Buttons ───────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glass-highlight);
+  white-space: nowrap;
+}
+
+.btn:hover  { background-color: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+  border: none;
+  box-shadow: 0 4px 15px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ─── Animations ────────────────────────────────────────────────── */
+@keyframes pulseFine {
+  0%   { box-shadow: 0 0 0 0  rgba(249, 115, 22, 0.6), inset 0 0 20px rgba(249, 115, 22, 0.2); }
+  70%  { box-shadow: 0 0 0 15px rgba(249, 115, 22, 0),  inset 0 0 0   rgba(249, 115, 22, 0);   }
+  100% { box-shadow: 0 0 0 0  rgba(249, 115, 22, 0),  inset 0 0 0   rgba(249, 115, 22, 0);   }
+}
+.animate-pulse-fine {
+  animation: pulseFine 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  border-color: var(--status-fined) !important;
+  background: rgba(249, 115, 22, 0.05) !important;
+}
+
+/* ─── Forms ─────────────────────────────────────────────────────── */
+.form-group  { margin-bottom: 1.25rem; }
+.form-label  {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.form-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+.form-input:focus {
+  border-color: var(--accent-primary);
+  background-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+.form-input::placeholder { color: var(--text-muted); }
+
+/* ─── Header & Dashboard ──────────────────────────────────────── */
+.dashboard-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+.mobile-menu-btn:hover {
+  color: var(--accent-primary);
+}
+
+/* ─── Slot Cards ─────────────────────────────────────────────────*/
+.slot-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.slot-card:hover { transform: translateY(-4px) scale(1.02); }
+
+/* Responsive slot grid columns — controlled via CSS class */
+.slot-two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────*/
+::-webkit-scrollbar         { width: 8px; height: 8px; }
+::-webkit-scrollbar-track   { background: rgba(0, 0, 0, 0.2); }
+::-webkit-scrollbar-thumb   { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tablet — 1024px */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+/* Tablet Portrait — 768px */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  /* Header */
+  .nav-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem !important;
+  }
+
+  .nav-separator {
+    display: none !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    display: none !important;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.75rem;
+    padding: 1.25rem 0.5rem 0.5rem 0.5rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 0 0 1rem 1rem;
+  }
+  
+  .nav-actions.open {
+    display: flex !important;
+  }
+  
+  .nav-actions > .btn {
+    width: 100%;
+    justify-content: flex-start; /* Align icon and text to the left */
+    padding: 0.75rem 1rem;
+  }
+
+  /* Make user info align with buttons */
+  .nav-actions > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 0.75rem;
+  }
+
+  /* Dashboard stat cards — 2 columns on tablet */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  /* Filter badges row — wrap */
+  .filter-bar {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Slot section header — stack */
+  .slot-section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+
+  /* SlotGrid — switch to single column (aisle in middle hidden) */
+  .slot-two-col-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+
+  .slot-aisle { display: none; }
+
+  /* Reduce base slot height */
+  .slot-card {
+    height: 140px !important;
+  }
+
+  /* Main text sizes */
+  h1 { font-size: 1.75rem !important; }
+  h3 { font-size: 1.2rem !important; }
+}
+
+/* Mobile — 480px */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .glass-panel {
+    padding: 1.25rem;
+  }
+
+  /* Logo title hidden on very small screens */
+  .hero-subtitle {
+    display: none;
+  }
+
+  /* Buttons compact */
+  .btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  /* Badge compact */
+  .badge {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.65rem;
+  }
+
+  /* Modals — full-width with a small outer margin */
+  .modal-panel {
+    width: calc(100% - 2rem) !important;
+    max-width: 100% !important;
+    margin: 0 1rem;
+  }
+
+  /* Slot card compact */
+  .slot-card {
+    height: 120px !important;
+  }
+
+  /* Stats grid — single column */
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Footer nav bar text */
+  .nav-brand-title {
+    font-size: 1rem !important;
+  }
+
+  h1 { font-size: 1.4rem !important; }
+}
+
+/* Notification toasts — full width on mobile */
+@media (max-width: 480px) {
+  .toast-container {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+  }
+
+  .toast-card {
+    width: 100% !important;
+  }
+}
