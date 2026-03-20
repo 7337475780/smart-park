@@ -13,7 +13,8 @@ export const analyzeParkingImageReq = async (imageFile) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to analyze parking image');
+      const msg = errorData.details ? `${errorData.error}: ${errorData.details}` : (errorData.error || 'Failed to analyze parking image');
+      throw new Error(msg);
     }
 
     return await response.json();

@@ -38,7 +38,7 @@ const VisionMonitor = () => {
     // Handle Interval Scan
     useEffect(() => {
         if (isAutoScanActive) {
-            autoScanIntervalRef.current = setInterval(performScan, 5000);
+            autoScanIntervalRef.current = setInterval(performScan, 8000);
         } else {
             if (autoScanIntervalRef.current) clearInterval(autoScanIntervalRef.current);
             autoScanIntervalRef.current = null;
@@ -153,7 +153,7 @@ const VisionMonitor = () => {
                     {isAutoScanActive ? (
                         <><Square size={14} style={{ marginRight: '6px' }} /> Stop Auto-Scan</>
                     ) : (
-                        <><Play size={14} style={{ marginRight: '6px' }} /> Start Live AI Scan (5s)</>
+                        <><Play size={14} style={{ marginRight: '6px' }} /> Start Live AI Scan (8s)</>
                     )}
                 </button>
             </div>
