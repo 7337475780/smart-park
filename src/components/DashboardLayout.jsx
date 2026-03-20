@@ -8,7 +8,9 @@ import AdminDashboard from './AdminDashboard';
 import AuthModal from './AuthModal';
 import Notifications from './Notifications';
 import AITrends from './AITrends';
-import { Camera, Car, UploadCloud, Settings as SettingsIcon, LogIn, LogOut, User, Menu, X } from 'lucide-react';
+import SimulationPanel from './SimulationPanel';
+import VisionMonitor from './VisionMonitor';
+import { Camera, Car, UploadCloud, Settings as SettingsIcon, LogIn, LogOut, User, Menu, X, Cpu } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
 import { useParking } from '../context/ParkingProvider';
 
@@ -19,6 +21,7 @@ const DashboardLayout = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSimOpen, setIsSimOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
 
   const filters = [
@@ -107,6 +110,11 @@ const DashboardLayout = () => {
             </button>
           )}
 
+          <button className="btn" onClick={() => setIsSimOpen(true)}
+            style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}>
+            <Cpu size={16} style={{ marginRight: '6px' }} /> Virtual Simulator
+          </button>
+
           <button className="btn btn-primary" onClick={() => setIsBookingOpen(true)}>
             <Car size={16} style={{ marginRight: '6px' }} /> Reserve a Slot
           </button>
@@ -133,6 +141,9 @@ const DashboardLayout = () => {
 
             {/* AI Trends */}
             <AITrends />
+
+            {/* Live Vision Monitor */}
+            <VisionMonitor />
 
             {/* Slot Grid with Filter Bar */}
             <div>
@@ -187,6 +198,7 @@ const DashboardLayout = () => {
       {isUploadOpen   && <ImageUploadModal onClose={() => setIsUploadOpen(false)}   />}
       {isAdminOpen    && <AdminDashboard   onClose={() => setIsAdminOpen(false)}    />}
       {isAuthOpen     && <AuthModal        onClose={() => setIsAuthOpen(false)}     />}
+      {isSimOpen      && <SimulationPanel   onClose={() => setIsSimOpen(false)}      />}
 
       <style>{`
         @keyframes pulse {
@@ -196,6 +208,7 @@ const DashboardLayout = () => {
         }
       `}</style>
 
+      {isSimOpen && <SimulationPanel onClose={() => setIsSimOpen(false)} />}
       <Notifications />
     </div>
   );
