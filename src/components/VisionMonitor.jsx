@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera, Scan, Activity, Info, ShieldCheck, Play, Square, Loader2 } from 'lucide-react';
+import { Camera, Scan, Activity, Info, ShieldCheck, Play, Square, Loader2, Crosshair } from 'lucide-react';
 import { analyzeParkingImageReq } from '../services/gemini';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -12,12 +12,20 @@ const VisionMonitor = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState('');
     const [cameraActive, setCameraActive] = useState(false);
+    const [telemetry, setTelemetry] = useState('0x0000');
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const autoScanIntervalRef = useRef(null);
 
-    // Initial flicker effect
+    // Telemetry & Effect loop
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTelemetry(Math.random().toString(16).slice(2, 10).toUpperCase());
+        }, 1500);
+        return () => clearInterval(interval);
+    }, []);
+
     useEffect(() => {
         setIsScanning(true);
         const timer = setTimeout(() => setIsScanning(false), 2000);
@@ -224,17 +232,57 @@ const VisionMonitor = () => {
                     }} />
 
                     {/* Target Brackets */}
-                    <div style={{ position: 'absolute', top: '10%', left: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px -5px 15px rgba(99,102,241,0.2)' }} />
-                    <div style={{ position: 'absolute', top: '10%', right: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px -5px 15px rgba(99,102,241,0.2)' }} />
-                    <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px 5px 15px rgba(99,102,241,0.2)' }} />
-                    <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px 5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', top: '10%', left: '10%', width: 'clamp(20px, 8vw, 40px)', height: 'clamp(20px, 8vw, 40px)', borderTop: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px -5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', top: '10%', right: '10%', width: 'clamp(20px, 8vw, 40px)', height: 'clamp(20px, 8vw, 40px)', borderTop: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px -5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 'clamp(20px, 8vw, 40px)', height: 'clamp(20px, 8vw, 40px)', borderBottom: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px 5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: 'clamp(20px, 8vw, 40px)', height: 'clamp(20px, 8vw, 40px)', borderBottom: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px 5px 15px rgba(99,102,241,0.2)' }} />
+
+                    {/* Mock AI Detection Boxes [NEW] */}
+                    {isAutoScanActive && isScanning && (
+                        <>
+                            <div style={{
+                                position: 'absolute', top: '35%', left: '42%', width: '120px', height: '80px',
+                                border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.1)',
+                                zIndex: 12, borderRadius: '4px'
+                            }}>
+                                <span style={{ position: 'absolute', top: '-18px', left: 0, background: '#10b981', color: '#fff', fontSize: '0.6rem', padding: '1px 4px', fontWeight: 'bold' }}>CAR_01 [94%]</span>
+                            </div>
+                            <div style={{
+                                position: 'absolute', top: '20%', left: '15%', width: '80px', height: '60px',
+                                border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)',
+                                zIndex: 12, borderRadius: '4px'
+                            }}>
+                                <span style={{ position: 'absolute', top: '-18px', left: 0, background: 'rgba(255,255,255,0.3)', color: '#fff', fontSize: '0.6rem', padding: '1px 4px' }}>EMPTY_SLOT</span>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Telemetry HUD [NEW] */}
+                    <div style={{
+                        position: 'absolute', bottom: '15%', right: '20px',
+                        color: 'rgba(99,102,241,0.8)', fontSize: '0.6rem',
+                        fontFamily: 'monospace', textAlign: 'right', zIndex: 15,
+                        textShadow: '0 0 5px rgba(99,102,241,0.5)'
+                    }}>
+                        RADAR_SIG: {telemetry}<br />
+                        COORDS: 18.52 / 73.85<br />
+                        LATENCY: 42ms
+                    </div>
+
+                    {/* Center Crosshair */}
+                    <div style={{
+                        position: 'absolute', top: '50%', left: '50%',
+                        transform: 'translate(-50%, -50%)', opacity: 0.3, color: 'var(--accent-primary)', zIndex: 10
+                    }}>
+                        <Crosshair size={32} strokeWidth={1} />
+                    </div>
 
                     {/* Scanning Laser */}
                     {isScanning && (
                         <div style={{
-                            position: 'absolute', top: 0, left: 0, width: '100%', height: '2px',
-                            background: 'rgba(99, 102, 241, 0.8)',
-                            boxShadow: '0 0 25px 2px var(--accent-primary)',
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '3px',
+                            background: 'linear-gradient(to right, transparent, rgba(99, 102, 241, 1), transparent)',
+                            boxShadow: '0 0 25px 3px var(--accent-primary)',
                             animation: 'scan 2.5s ease-in-out infinite',
                             zIndex: 15
                         }} />
@@ -244,11 +292,15 @@ const VisionMonitor = () => {
                     {lastScanResult && isScanning && (
                         <div style={{
                             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                            background: 'rgba(16, 185, 129, 0.9)', color: 'white', padding: '10px 20px',
-                            borderRadius: '99px', fontSize: '0.8rem', fontWeight: 'bold', zIndex: 20,
-                            boxShadow: '0 0 20px rgba(16, 185, 129, 0.5)'
+                            background: 'rgba(16, 185, 129, 0.95)', color: 'white', padding: '10px 24px',
+                            borderRadius: '12px', fontSize: '0.85rem', fontWeight: '800', zIndex: 25,
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.2)',
+                            backdropFilter: 'blur(10px)', animation: 'scaleUp 0.3s ease-out'
                         }}>
-                            {lastScanResult.carDetected ? `PROCESSED: ${lastScanResult.licensePlate || 'VEHICLE'}` : 'PROCESSED: EMPTY'}
+                             <div className="flex items-center gap-2">
+                                <ShieldCheck size={18} />
+                                {lastScanResult.carDetected ? `VEHICLE ID: ${lastScanResult.licensePlate || 'DETECTED'}` : 'SECTOR CLEAR: NO VEHICLE'}
+                             </div>
                         </div>
                     )}
 
@@ -265,6 +317,10 @@ const VisionMonitor = () => {
                     0% { top: 0% }
                     50% { top: 100% }
                     100% { top: 0% }
+                }
+                @keyframes scaleUp {
+                    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+                    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
                 }
                 .animate-spin {
                     animation: spin 1s linear infinite;

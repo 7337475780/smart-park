@@ -118,7 +118,7 @@ const Dashboard = () => {
                   className="dashboard-stat-value"
                   style={{
                     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                    fontSize: '1.6rem', fontWeight: '800', fontFamily: 'monospace'
+                    fontSize: 'clamp(1.2rem, 5vw, 1.6rem)', fontWeight: '800', fontFamily: 'monospace'
                   }}
                 >
                   {m.value}
@@ -130,7 +130,7 @@ const Dashboard = () => {
                 style={{
                   color: m.color,
                   fontWeight: '700',
-                  fontSize: '0.85rem',
+                  fontSize: 'clamp(0.65rem, 2vw, 0.85rem)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}

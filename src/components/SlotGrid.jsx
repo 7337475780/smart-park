@@ -1,15 +1,26 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParking } from '../context/ParkingProvider';
-import { Car } from 'lucide-react';
+import { Car, Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SlotGrid = () => {
    const { slots, activeFilter } = useParking();
+   const [searchQuery, setSearchQuery] = React.useState('');
 
    const filteredSlots = useMemo(() => {
-      if (activeFilter === 'all') return slots;
-      return slots.filter(s => s.status === activeFilter);
-   }, [slots, activeFilter]);
+      let temp = slots;
+      if (activeFilter !== 'all') {
+         temp = temp.filter(s => s.status === activeFilter);
+      }
+      if (searchQuery.trim()) {
+         const q = searchQuery.toLowerCase();
+         temp = temp.filter(s => 
+            (s.plateNumber || '').toLowerCase().includes(q) ||
+            (s.slotId || '').toLowerCase().includes(q)
+         );
+      }
+      return temp;
+   }, [slots, activeFilter, searchQuery]);
 
    const containerVariants = {
       hidden: { opacity: 0 },
@@ -151,13 +162,13 @@ const SlotGrid = () => {
             {/* Slot content */}
             <div style={{ textAlign: 'center' }}>
                {slot.status === 'available' ? (
-                  <h2 style={{
-                     fontSize: 'clamp(1.5rem, 4vw, 3rem)',
-                     fontWeight: '900',
-                     margin: 0,
-                     color: 'rgba(255,255,255,0.12)',
-                     letterSpacing: '0.2em',
-                  }}>EMPTY</h2>
+                   <h2 style={{
+                      fontSize: 'clamp(1rem, 3.5vw, 2.22rem)',
+                      fontWeight: '900',
+                      margin: 0,
+                      color: 'rgba(255,255,255,0.12)',
+                      letterSpacing: '0.2em',
+                   }}>EMPTY</h2>
                ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                      <Car
@@ -165,18 +176,18 @@ const SlotGrid = () => {
                         color={getStatusColor(slot.status)}
                         style={{ filter: `drop-shadow(0 0 12px ${getStatusColor(slot.status)}44)` }}
                      />
-                     <div style={{
-                        background: 'rgba(0,0,0,0.5)',
-                        padding: '0.3rem 0.75rem',
-                        borderRadius: '4px',
-                        border: `1px solid ${getStatusColor(slot.status)}44`,
-                        color: '#fff',
-                        fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
-                        fontWeight: '700',
-                        fontFamily: 'monospace',
-                     }}>
-                        {slot.plateNumber}
-                     </div>
+                      <div style={{
+                         background: 'rgba(0,0,0,0.5)',
+                         padding: '0.3rem 0.75rem',
+                         borderRadius: '4px',
+                         border: `1px solid ${getStatusColor(slot.status)}44`,
+                         color: '#fff',
+                         fontSize: 'clamp(0.65rem, 2.5vw, 0.9rem)',
+                         fontWeight: '700',
+                         fontFamily: 'monospace',
+                      }}>
+                         {slot.plateNumber}
+                      </div>
                      {(slot.status === 'occupied' || slot.status === 'fined') && (
                         <ResidencyTimer startTime={slot.entryTime} status={slot.status} />
                      )}
@@ -256,7 +267,7 @@ const SlotGrid = () => {
                .slot-two-col-grid {
                   grid-template-columns: 1fr;
                   column-gap: 0;
-                  max-width: 420px;
+                  max-width: 100%;
                }
                .slot-two-col-grid::before { display: none; }
                .slot-parking-wrapper {
@@ -273,6 +284,68 @@ const SlotGrid = () => {
          `}</style>
 
          <div className="slot-parking-wrapper">
+            {/* Search Bar [NEW] */}
+            <div style={{
+               maxWidth: '500px',
+               width: '100%',
+               margin: '0 auto 2.5rem auto',
+               position: 'relative',
+               zIndex: 10
+            }}>
+               <div style={{ position: 'relative' }}>
+                  <Search size={18} style={{
+                     position: 'absolute',
+                     left: '16px',
+                     top: '50%',
+                     transform: 'translateY(-50%)',
+                     color: 'rgba(99, 102, 241, 0.6)'
+                  }} />
+                  <input
+                     type="text"
+                     placeholder="Search plate or slot (e.g. MH 12... or A1)"
+                     value={searchQuery}
+                     onChange={(e) => setSearchQuery(e.target.value)}
+                     style={{
+                        width: '100%',
+                        padding: '12px 45px 12px 45px',
+                        background: 'rgba(15, 23, 42, 0.6)',
+                        border: '1px solid rgba(99, 102, 241, 0.3)',
+                        borderRadius: '12px',
+                        color: '#fff',
+                        fontSize: '0.9rem',
+                        outline: 'none',
+                        transition: 'all 0.3s',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                     }}
+                     onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
+                     onBlur={(e) => e.target.style.borderColor = 'rgba(99, 102, 241, 0.3)'}
+                  />
+                  {searchQuery && (
+                     <button
+                        onClick={() => setSearchQuery('')}
+                        style={{
+                           position: 'absolute',
+                           right: '12px',
+                           top: '50%',
+                           transform: 'translateY(-50%)',
+                           background: 'rgba(255,255,255,0.05)',
+                           border: 'none',
+                           borderRadius: '50%',
+                           width: '24px',
+                           height: '24px',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           cursor: 'pointer',
+                           color: 'var(--text-secondary)'
+                        }}
+                     >
+                        <X size={14} />
+                     </button>
+                  )}
+               </div>
+            </div>
+
             {sortedSlots.length === 0 ? (
                <div style={{
                   flex: 1,

@@ -104,28 +104,49 @@ const SimulationPanel = ({ onClose }) => {
           gap: 0.5rem; max-height: 120px; overflow-y: auto; padding: 0.5rem;
           background: rgba(0,0,0,0.3); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);
         }
-        .sim-card {
-          padding: 1.5rem; border-radius: 1rem;
-          background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-        }
         .demo-btn {
-            background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-primary);
-            color: var(--accent-primary); padding: 0.5rem 1rem; border-radius: 8px;
-            font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
-            display: flex; alignItems: center; gap: 6px;
+            background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.5);
+            color: var(--accent-primary); padding: 0.6rem 1.2rem; border-radius: 12px;
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem); font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; alignItems: center; gap: 10px;
+            min-height: 44px;
+            flex: 1 1 auto;
+            justify-content: center;
         }
-        .demo-btn:hover { background: var(--accent-primary); color: white; transform: translateY(-2px); }
+        .demo-btn:hover { 
+            background: var(--accent-primary); 
+            color: white; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        @media (max-width: 640px) {
+          .demo-btn {
+            width: 100%;
+            flex: none;
+          }
+          .sim-slot-picker {
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+          }
+        }
       `}</style>
       
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', padding: '2.5rem' }}>
+      <div className="glass-panel" style={{ 
+        width: '100%', 
+        maxWidth: '900px', 
+        maxHeight: '90vh', 
+        overflowY: 'auto', 
+        padding: 'clamp(1rem, 5vw, 2.5rem)',
+        borderRadius: '1.5rem'
+      }}>
         
         {/* Header */}
         <div className="flex justify-between items-start" style={{ marginBottom: '2rem' }}>
             <div>
-                <h2 style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
+                <h2 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.8rem)', display: 'flex', alignItems: 'center', gap: 'clamp(10px, 3vw, 14px)', margin: 0, fontWeight: 800 }}>
                     <Cpu className="text-accent" size={28} /> Virtual AI Simulator
                 </h2>
-                <p className="text-secondary text-sm">Test the AI logic and dashboard updates manually.</p>
+                <p className="text-secondary" style={{ fontSize: 'clamp(0.75rem, 2vw, 0.875rem)', marginTop: '0.25rem' }}>Test the AI logic and dashboard updates manually.</p>
             </div>
             <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                 <X size={28} />
@@ -134,22 +155,27 @@ const SimulationPanel = ({ onClose }) => {
 
         {/* Quick Simulation Presets */}
         <div style={{ marginBottom: '2.5rem' }}>
-            <h4 className="text-xs uppercase text-muted font-bold tracking-widest mb-3">One-Click Demo Scenarios</h4>
-            <div className="flex gap-3 flex-wrap">
-                <button className="demo-btn" onClick={() => runQuickDemo('entry')}><Play size={14}/> Simulate Vehicle Entry</button>
-                <button className="demo-btn" onClick={() => runQuickDemo('violation')} style={{ borderColor: 'var(--status-fined)', color: 'var(--status-fined)' }}><Zap size={14}/> Simulate Parking Violation</button>
-                <button className="demo-btn" onClick={() => runQuickDemo('exit')} style={{ borderColor: 'var(--text-secondary)', color: 'var(--text-secondary)' }}><LogOut size={14}/> Simulate Vehicle Exit</button>
+            <h4 className="text-muted font-bold tracking-widest mb-3" style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.7rem)', textTransform: 'uppercase' }}>One-Click Demo Scenarios</h4>
+            <div style={{ 
+              display: 'flex', 
+              gap: 'clamp(0.5rem, 2vw, 1rem)', 
+              flexWrap: 'wrap',
+              width: '100%'
+            }}>
+                <button className="demo-btn" onClick={() => runQuickDemo('entry')}><Play size={16}/> Simulate Vehicle Entry</button>
+                <button className="demo-btn" onClick={() => runQuickDemo('violation')} style={{ borderColor: 'var(--status-fined)', color: 'var(--status-fined)', background: 'rgba(239, 68, 68, 0.05)' }}><Zap size={16}/> Simulate Parking Violation</button>
+                <button className="demo-btn" onClick={() => runQuickDemo('exit')} style={{ borderColor: 'var(--text-secondary)', color: 'var(--text-secondary)', background: 'rgba(255, 255, 255, 0.05)' }}><LogOut size={16}/> Simulate Vehicle Exit</button>
             </div>
         </div>
 
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
             
             {/* AI SCANNER SECTION */}
             <div className="sim-card" style={{ gridColumn: '1 / -1', background: 'linear-gradient(145deg, rgba(30,27,75,0.4), rgba(15,23,42,0.8))', border: '1px solid rgba(99,102,241,0.3)' }}>
-                <h4 style={{ color: 'var(--accent-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h4 style={{ color: 'var(--accent-primary)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px', fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', fontWeight: 700 }}>
                     <ImageIcon size={18} /> AI Vision Analysis Scan
                 </h4>
-                <form onSubmit={handleGeminiAnalysis} className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'end' }}>
+                <form onSubmit={handleGeminiAnalysis} className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'end' }}>
                     <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label">Target Parking Sector</label>
                         <div className="sim-slot-picker">
@@ -179,7 +205,7 @@ const SimulationPanel = ({ onClose }) => {
 
             {/* MANUAL OVERRIDE SECTION */}
             <div className="sim-card">
-                <h4 style={{ color: 'var(--status-available)', marginBottom: '1.25rem' }}>Manual Entry Injection</h4>
+                <h4 style={{ color: 'var(--status-available)', marginBottom: '1.25rem', fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', fontWeight: 700 }}>Manual Entry Injection</h4>
                 <form onSubmit={handleArrival}>
                     <div className="form-group">
                         <label className="form-label text-xs">Plate Number</label>
@@ -196,7 +222,7 @@ const SimulationPanel = ({ onClose }) => {
             </div>
 
             <div className="sim-card">
-                <h4 style={{ color: 'var(--status-fined)', marginBottom: '1.25rem' }}>Violation Injection</h4>
+                <h4 style={{ color: 'var(--status-fined)', marginBottom: '1.25rem', fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', fontWeight: 700 }}>Violation Injection</h4>
                 <form onSubmit={handleBadParking}>
                     <div className="form-group">
                         <label className="form-label text-xs">Plate Number</label>

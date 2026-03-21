@@ -26,11 +26,11 @@ const DashboardLayout = () => {
   const { user, logout, isAdmin } = useAuth();
 
   const filters = [
-    { id: 'all',       label: 'All',      cls: 'all' },
+    { id: 'all', label: 'All', cls: 'all' },
     { id: 'available', label: 'Available', cls: 'available' },
-    { id: 'occupied',  label: 'Occupied',  cls: 'occupied' },
-    { id: 'booked',    label: 'Reserved',  cls: 'booked' },
-    { id: 'fined',     label: 'Fined',     cls: 'fined' },
+    { id: 'occupied', label: 'Occupied', cls: 'occupied' },
+    { id: 'booked', label: 'Reserved', cls: 'booked' },
+    { id: 'fined', label: 'Fined', cls: 'fined' },
   ];
 
   return (
@@ -59,7 +59,11 @@ const DashboardLayout = () => {
         }}
       >
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="nav-brand-container" style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'clamp(14px, 5vw, 24px)' 
+        }}>
           <div style={{
             background: 'rgba(99, 102, 241, 0.1)',
             padding: '4px', borderRadius: '14px',
@@ -74,28 +78,41 @@ const DashboardLayout = () => {
           </div>
           <div>
             <h2 className="nav-brand-title" style={{ 
-              fontSize: '1.3rem', 
+              fontSize: 'clamp(1rem, 4vw, 1.3rem)', 
               lineHeight: 1, 
               fontWeight: 800,
               color: 'var(--text-primary)',
               textShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
               letterSpacing: '-0.01em'
             }}>SmartPark AI</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-              <span style={{ 
-                width: '6px', height: '6px', borderRadius: '50%', background: '#34d399',
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'clamp(6px, 1.5vw, 8px)', 
+              marginTop: 'clamp(2px, 1vw, 4px)' 
+            }}>
+              <span className="status-dot" style={{
+                width: 'clamp(5px, 1.25vw, 6px)', 
+                height: 'clamp(5px, 1.25vw, 6px)', 
+                borderRadius: '50%', 
+                background: '#34d399',
                 boxShadow: '0 0 8px #34d399',
                 animation: 'pulse 2s infinite ease-in-out'
               }}></span>
-              <span className="hero-subtitle text-xs text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '500' }}>
+              <span className="hero-subtitle text-xs text-secondary" style={{ 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.05em', 
+                fontWeight: '600',
+                fontSize: 'clamp(0.6rem, 1.5vw, 0.75rem)'
+              }}>
                 Live Automated View
               </span>
             </div>
           </div>
         </div>
 
-        <button 
-          className="mobile-menu-btn" 
+        <button
+          className="mobile-menu-btn"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -174,16 +191,21 @@ const DashboardLayout = () => {
               {/* Section Header */}
               <div className="slot-section-header" style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1.25rem',
-                flexWrap: 'wrap',
-                gap: '0.75rem',
+                 flexWrap: 'wrap',
+                 gap: '1rem',
+                 justifyContent: 'space-between',
               }}>
                 <h3 style={{ fontSize: '1.4rem' }}>Live Slot Grid</h3>
 
                 {/* Filter Badges */}
-                <div className="filter-bar" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                 <div className="filter-bar" style={{ 
+                   display: 'flex', 
+                   gap: '12px', 
+                   flexWrap: 'wrap', 
+                   justifyContent: 'center',
+                   width: '100%',
+                   padding: '4px 0',
+                 }}>
                   {filters.map(badge => (
                     <button
                       key={badge.id}
@@ -218,11 +240,11 @@ const DashboardLayout = () => {
       </main>
 
       {/* Modals */}
-      {isBookingOpen  && <BookingModal     onClose={() => setIsBookingOpen(false)}  />}
-      {isUploadOpen   && <ImageUploadModal onClose={() => setIsUploadOpen(false)}   />}
-      {isAdminOpen    && <AdminDashboard   onClose={() => setIsAdminOpen(false)}    />}
-      {isAuthOpen     && <AuthModal        onClose={() => setIsAuthOpen(false)}     />}
-      {isSimOpen      && <SimulationPanel   onClose={() => setIsSimOpen(false)}      />}
+      {isBookingOpen && <BookingModal onClose={() => setIsBookingOpen(false)} />}
+      {isUploadOpen && <ImageUploadModal onClose={() => setIsUploadOpen(false)} />}
+      {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} />}
+      {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
+      {isSimOpen && <SimulationPanel onClose={() => setIsSimOpen(false)} />}
 
       <style>{`
         @keyframes pulse {
