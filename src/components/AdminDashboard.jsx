@@ -148,163 +148,166 @@ const AdminDashboard = ({ onClose }) => {
           </button>
         </div>
 
-        {activeTab === 'settings' ? (
-          <form onSubmit={handleSave}>
-            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-              <label className="form-label">Total Parking Slots</label>
-              <input type="number" min="1" max="100" className="form-input"
-                value={totalSlots} onChange={e => setTotalSlots(e.target.value)} required />
-              <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
-                Warning: Reducing slots will delete the highest-ID slots from the database.
-              </p>
-            </div>
-            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-              <label className="form-label">Violation Fine (₹)</label>
-              <input type="number" min="0" step="5" className="form-input"
-                value={fineAmount} onChange={e => setFineAmount(e.target.value)} required />
-            </div>
-            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-              <label className="form-label">Hourly Rate (₹)</label>
-              <input type="number" min="0" step="1" className="form-input"
-                value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} required />
-              <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
-                Calculated dynamically based on stay duration.
-              </p>
-            </div>
+        {/* Scrollable Content Area */}
+        <div style={{ maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>
+          {activeTab === 'settings' ? (
+            <form onSubmit={handleSave}>
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <label className="form-label">Total Parking Slots</label>
+                <input type="number" min="1" max="100" className="form-input"
+                  value={totalSlots} onChange={e => setTotalSlots(e.target.value)} required />
+                <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
+                  Warning: Reducing slots will delete the highest-ID slots from the database.
+                </p>
+              </div>
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <label className="form-label">Violation Fine (₹)</label>
+                <input type="number" min="0" step="5" className="form-input"
+                  value={fineAmount} onChange={e => setFineAmount(e.target.value)} required />
+              </div>
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <label className="form-label">Hourly Rate (₹)</label>
+                <input type="number" min="0" step="1" className="form-input"
+                  value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} required />
+                <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
+                  Calculated dynamically based on stay duration.
+                </p>
+              </div>
 
-            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-              <label className="form-label">Hardware Stream URL (ESP32 / Mobile)</label>
-              <input type="url" className="form-input" placeholder="http://192.168.x.x:8080/video"
-                value={streamUrl} onChange={e => setStreamUrl(e.target.value)} />
-              <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
-                Enter the MJPEG stream URL from your ESP32 or an IP Cam app on your mobile.
-              </p>
-            </div>
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <label className="form-label">Hardware Stream URL (ESP32 / Mobile)</label>
+                <input type="url" className="form-input" placeholder="http://192.168.x.x:8080/video"
+                  value={streamUrl} onChange={e => setStreamUrl(e.target.value)} />
+                <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
+                  Enter the MJPEG stream URL from your ESP32 or an IP Cam app on your mobile.
+                </p>
+              </div>
 
-            <div style={{
-              marginTop: '1.5rem', padding: '1rem',
-              background: 'rgba(239, 68, 68, 0.05)',
-              borderRadius: '0.75rem', border: '1px solid rgba(239, 68, 68, 0.2)'
-            }}>
-              <label className="form-label" style={{ color: '#ef4444' }}>Maintenance</label>
-              <p className="text-xs text-secondary" style={{ marginBottom: '0.75rem' }}>Export data or irreversibly delete all AI activity logs.</p>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ flex: 1, fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                  onClick={exportLogsCSV}
-                >
-                  <Download size={14} /> Export CSV
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ flex: 1, borderColor: '#ef4444', color: '#ef4444', fontSize: '0.75rem' }}
-                  onClick={async () => {
-                    const confirmed = await showConfirm('Clear All Logs', 'Irreversibly delete all AI activity logs and history? This cannot be undone.');
-                    if (confirmed) {
-                      try {
-                        const res = await fetch(`${API_BASE}/api/logs`, { method: 'DELETE' });
-                        if (res.ok) {
-                          showToast('Logs cleared successfully', 'success');
-                        } else {
-                          showToast('Failed to clear logs', 'error');
+              <div style={{
+                marginTop: '1.5rem', padding: '1rem',
+                background: 'rgba(239, 68, 68, 0.05)',
+                borderRadius: '0.75rem', border: '1px solid rgba(239, 68, 68, 0.2)'
+              }}>
+                <label className="form-label" style={{ color: '#ef4444' }}>Maintenance</label>
+                <p className="text-xs text-secondary" style={{ marginBottom: '0.75rem' }}>Export data or irreversibly delete all AI activity logs.</p>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{ flex: 1, fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                    onClick={exportLogsCSV}
+                  >
+                    <Download size={14} /> Export CSV
+                  </button>
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{ flex: 1, borderColor: '#ef4444', color: '#ef4444', fontSize: '0.75rem' }}
+                    onClick={async () => {
+                      const confirmed = await showConfirm('Clear All Logs', 'Irreversibly delete all AI activity logs and history? This cannot be undone.');
+                      if (confirmed) {
+                        try {
+                          const res = await fetch(`${API_BASE}/api/logs`, { method: 'DELETE' });
+                          if (res.ok) {
+                            showToast('Logs cleared successfully', 'success');
+                          } else {
+                            showToast('Failed to clear logs', 'error');
+                          }
+                        } catch (e) {
+                          showToast('Network error while clearing logs', 'error');
                         }
-                      } catch (e) {
-                        showToast('Network error while clearing logs', 'error');
                       }
-                    }
-                  }}
-                >
-                  Clear All Logs
+                    }}
+                  >
+                    Clear All Logs
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <button type="button" className="btn" style={{ flex: '1 1 auto', minWidth: '100px' }} onClick={onClose} disabled={isSaving}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: '2 1 auto', minWidth: '160px' }} disabled={isSaving || saveSuccess}>
+                  {isSaving ? 'Saving...' : saveSuccess
+                    ? <><CheckCircle2 size={16} style={{ marginRight: '6px' }} />Saved!</>
+                    : <><Save size={16} style={{ marginRight: '6px' }} />Apply Changes</>}
                 </button>
               </div>
-            </div>
+            </form>
+          ) : (
+            <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
+              <p className="text-sm text-secondary" style={{ marginBottom: '1.25rem' }}>
+                Promote users to Admin or remove privileges. The default 'admin' account cannot be modified.
+              </p>
+              {userList.map(user => (
+                <div key={user._id} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '0.65rem 0.75rem',
+                  backgroundColor: 'rgba(255,255,255,0.05)',
+                  borderRadius: '0.75rem',
+                  marginBottom: '0.4rem',
+                  flexWrap: 'wrap', gap: '0.5rem',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <div style={{
+                      padding: '0.4rem', borderRadius: '50%',
+                      backgroundColor: user.role === 'admin' ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)',
+                    }}>
+                      {user.role === 'admin'
+                        ? <Shield size={14} style={{ color: 'var(--status-available)' }} />
+                        : <User size={14} className="text-secondary" />}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', fontSize: '0.88rem' }}>{user.username}</div>
+                      <div className="text-xs text-muted" style={{ textTransform: 'capitalize' }}>{user.role}</div>
+                    </div>
+                  </div>
 
-            <div style={{ marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <button type="button" className="btn" style={{ flex: '1 1 auto', minWidth: '100px' }} onClick={onClose} disabled={isSaving}>Cancel</button>
-              <button type="submit" className="btn btn-primary" style={{ flex: '2 1 auto', minWidth: '160px' }} disabled={isSaving || saveSuccess}>
-                {isSaving ? 'Saving...' : saveSuccess
-                  ? <><CheckCircle2 size={16} style={{ marginRight: '6px' }} />Saved!</>
-                  : <><Save size={16} style={{ marginRight: '6px' }} />Apply Changes</>}
+                  {user.username !== 'admin' && (
+                    <button
+                      className="btn text-xs"
+                      style={{
+                        height: '30px', fontSize: '0.75rem',
+                        borderColor: user.role === 'admin' ? '#ef4444' : 'var(--status-available)',
+                        color: user.role === 'admin' ? '#ef4444' : 'var(--status-available)',
+                        opacity: userActionLoading === user._id ? 0.5 : 1,
+                      }}
+                      disabled={userActionLoading === user._id}
+                      onClick={() => handleRoleChange(user._id, user.role === 'admin' ? 'user' : 'admin')}
+                    >
+                      {user.role === 'admin'
+                        ? <><ShieldOff size={12} style={{ marginRight: '3px' }} />Remove</>
+                        : <><ShieldAlert size={12} style={{ marginRight: '3px' }} />Make Admin</>}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '1rem' }}>
+            <h4 style={{ fontSize: '0.85rem', color: 'var(--status-available)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Mobile Scanner Sync</h4>
+            <p className="text-xs text-secondary" style={{ marginBottom: '1rem' }}>Use your smartphone as a high-precision sensor if the hardware fails.</p>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <input 
+                type="text" 
+                readOnly 
+                className="form-input" 
+                style={{ fontSize: '0.7rem', background: 'rgba(0,0,0,0.2)' }}
+                value={`${window.location.origin}/scan`} 
+              />
+              <button 
+                className="btn btn-primary" 
+                style={{ fontSize: '0.75rem', background: 'var(--status-available)', borderColor: 'var(--status-available)' }}
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/scan`);
+                  showToast('Sync link copied!', 'success');
+                }}
+              >
+                Copy Link
               </button>
             </div>
-          </form>
-        ) : (
-          <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
-            <p className="text-sm text-secondary" style={{ marginBottom: '1.25rem' }}>
-              Promote users to Admin or remove privileges. The default 'admin' account cannot be modified.
-            </p>
-            {userList.map(user => (
-              <div key={user._id} style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '0.65rem 0.75rem',
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                borderRadius: '0.75rem',
-                marginBottom: '0.4rem',
-                flexWrap: 'wrap', gap: '0.5rem',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <div style={{
-                    padding: '0.4rem', borderRadius: '50%',
-                    backgroundColor: user.role === 'admin' ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)',
-                  }}>
-                    {user.role === 'admin'
-                      ? <Shield size={14} style={{ color: 'var(--status-available)' }} />
-                      : <User size={14} className="text-secondary" />}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: '600', fontSize: '0.88rem' }}>{user.username}</div>
-                    <div className="text-xs text-muted" style={{ textTransform: 'capitalize' }}>{user.role}</div>
-                  </div>
-                </div>
-
-                {user.username !== 'admin' && (
-                  <button
-                    className="btn text-xs"
-                    style={{
-                      height: '30px', fontSize: '0.75rem',
-                      borderColor: user.role === 'admin' ? '#ef4444' : 'var(--status-available)',
-                      color: user.role === 'admin' ? '#ef4444' : 'var(--status-available)',
-                      opacity: userActionLoading === user._id ? 0.5 : 1,
-                    }}
-                    disabled={userActionLoading === user._id}
-                    onClick={() => handleRoleChange(user._id, user.role === 'admin' ? 'user' : 'admin')}
-                  >
-                    {user.role === 'admin'
-                      ? <><ShieldOff size={12} style={{ marginRight: '3px' }} />Remove</>
-                      : <><ShieldAlert size={12} style={{ marginRight: '3px' }} />Make Admin</>}
-                  </button>
-                )}
-              </div>
-            ))}
+            <p className="text-xs text-muted" style={{ marginTop: '0.5rem' }}>Open this URL on your mobile browser to start scanning.</p>
           </div>
-        )}
-
-        <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '1rem' }}>
-          <h4 style={{ fontSize: '0.85rem', color: 'var(--status-available)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Mobile Scanner Sync</h4>
-          <p className="text-xs text-secondary" style={{ marginBottom: '1rem' }}>Use your smartphone as a high-precision sensor if the hardware fails.</p>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <input 
-              type="text" 
-              readOnly 
-              className="form-input" 
-              style={{ fontSize: '0.7rem', background: 'rgba(0,0,0,0.2)' }}
-              value={`${window.location.origin}/scan`} 
-            />
-            <button 
-              className="btn btn-primary" 
-              style={{ fontSize: '0.75rem', background: 'var(--status-available)', borderColor: 'var(--status-available)' }}
-              onClick={() => {
-                navigator.clipboard.writeText(`${window.location.origin}/scan`);
-                showToast('Sync link copied!', 'success');
-              }}
-            >
-              Copy Link
-            </button>
-          </div>
-          <p className="text-xs text-muted" style={{ marginTop: '0.5rem' }}>Open this URL on your mobile browser to start scanning.</p>
         </div>
       </div>
     </div>
