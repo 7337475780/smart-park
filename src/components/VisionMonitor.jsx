@@ -59,12 +59,12 @@ const VisionMonitor = () => {
     const startAutoScan = async () => {
         try {
             setError('');
-            const constraints = { 
-                video: { 
-                    width: { ideal: 1280 }, 
-                    height: { ideal: 720 }, 
-                    facingMode: { ideal: 'environment' } 
-                } 
+            const constraints = {
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                    facingMode: { ideal: 'environment' }
+                }
             };
             const newStream = await navigator.mediaDevices.getUserMedia(constraints);
             setStream(newStream);
@@ -88,14 +88,14 @@ const VisionMonitor = () => {
     const performScan = async () => {
         // We use isAutoScanActive to guard the scan
         if (!videoRef.current || !videoRef.current.srcObject) return;
-        
+
         setIsAnalyzing(true);
         setIsScanning(true);
 
         try {
             const video = videoRef.current;
             const canvas = canvasRef.current;
-            
+
             // Sync canvas size
             if (video.videoWidth) {
                 canvas.width = video.videoWidth;
@@ -135,9 +135,9 @@ const VisionMonitor = () => {
             <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
                 <div className="flex items-center gap-2">
                     <div style={{
-                        width: '10px', height: '10px', 
+                        width: '10px', height: '10px',
                         background: isAutoScanActive ? '#10b981' : '#ff4444',
-                        borderRadius: '50%', 
+                        borderRadius: '50%',
                         boxShadow: `0 0 10px ${isAutoScanActive ? '#10b981' : '#ff4444'}`,
                         animation: 'pulse 1.5s infinite'
                     }} />
@@ -145,7 +145,7 @@ const VisionMonitor = () => {
                         {isAutoScanActive ? 'AI Auto-Scan Active' : 'AI Vision Feed'}
                     </h3>
                 </div>
-                <button 
+                <button
                     className={`btn ${isAutoScanActive ? 'btn-danger' : 'btn-primary'}`}
                     onClick={toggleAutoScan}
                     style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', borderRadius: '8px' }}
@@ -179,7 +179,7 @@ const VisionMonitor = () => {
                     background: '#0a0a0f'
                 }}>
                     {isAutoScanActive ? (
-                        <video 
+                        <video
                             ref={videoRef} autoPlay playsInline muted
                             onCanPlay={(e) => e.target.play()}
                             onPlaying={() => setCameraActive(true)}
@@ -199,33 +199,42 @@ const VisionMonitor = () => {
 
                     {/* HUD Status Bar */}
                     <div style={{
-                        position: 'absolute', top: 0, left: 0, width: '100%', 
-                        padding: '10px 15px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
-                        display: 'flex', justifyContent: 'space-between', zIndex: 10
+                        position: 'absolute', top: 0, left: 0, width: '100%',
+                        padding: '12px 20px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)',
+                        display: 'flex', justifyContent: 'space-between', zIndex: 10,
+                        borderBottom: '1px solid rgba(255,255,255,0.05)'
                     }}>
-                        <div style={{ color: 'var(--accent-primary)', fontSize: '0.65rem', fontFamily: 'monospace' }}>
-                            {isAutoScanActive ? 'WEB_CAM_INPUT::ACTIVE' : 'HARDWARE_NODE::CONNECTED'}<br />
-                            STATUS: {isAnalyzing ? 'UPLOADING...' : 'MONITORING'}
+                        <div style={{ color: 'var(--accent-primary)', fontSize: '0.7rem', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                            <span style={{ opacity: 0.7 }}>[INPUT_O]</span> {isAutoScanActive ? 'WEBCAM_SRC' : 'HARDWARE_P01'}<br />
+                            <span style={{ opacity: 0.7 }}>[STATUS]</span> {isAnalyzing ? 'UPLOADING...' : 'MONITORING'}
                         </div>
                         {isAutoScanActive && (
-                            <div className="text-accent flex items-center gap-1" style={{ fontSize: '0.65rem', fontWeight: 'bold' }}>
-                                <Loader2 className="animate-spin" size={10} /> LIVE_ANALYTICS
+                            <div className="text-accent flex items-center gap-2" style={{ fontSize: '0.7rem', fontWeight: 'bold', fontFamily: 'monospace' }}>
+                                <div style={{ width: '6px', height: '6px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 8px #10b981' }} />
+                                LIVE_CORE
                             </div>
                         )}
                     </div>
 
+                    {/* CRT Scanline Overlay */}
+                    <div style={{
+                        position: 'absolute', inset: 0, pointerEvents: 'none',
+                        background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))',
+                        backgroundSize: '100% 4px, 3px 100%', zIndex: 5, opacity: 0.4
+                    }} />
+
                     {/* Target Brackets */}
-                    <div style={{ position: 'absolute', top: '10%', left: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.5 }} />
-                    <div style={{ position: 'absolute', top: '10%', right: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.5 }} />
-                    <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.5 }} />
-                    <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.5 }} />
+                    <div style={{ position: 'absolute', top: '10%', left: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px -5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', top: '10%', right: '10%', width: '40px', height: '40px', borderTop: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px -5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderLeft: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '-5px 5px 15px rgba(99,102,241,0.2)' }} />
+                    <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '40px', height: '40px', borderBottom: '2px solid var(--accent-primary)', borderRight: '2px solid var(--accent-primary)', opacity: 0.6, boxShadow: '5px 5px 15px rgba(99,102,241,0.2)' }} />
 
                     {/* Scanning Laser */}
                     {isScanning && (
                         <div style={{
-                            position: 'absolute', top: 0, left: 0, width: '100%', height: '3px',
-                            background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)',
-                            boxShadow: '0 0 20px var(--accent-primary)',
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '2px',
+                            background: 'rgba(99, 102, 241, 0.8)',
+                            boxShadow: '0 0 25px 2px var(--accent-primary)',
                             animation: 'scan 2.5s ease-in-out infinite',
                             zIndex: 15
                         }} />
@@ -239,7 +248,7 @@ const VisionMonitor = () => {
                             borderRadius: '99px', fontSize: '0.8rem', fontWeight: 'bold', zIndex: 20,
                             boxShadow: '0 0 20px rgba(16, 185, 129, 0.5)'
                         }}>
-                             {lastScanResult.carDetected ? `PROCESSED: ${lastScanResult.licensePlate || 'VEHICLE'}` : 'PROCESSED: EMPTY'}
+                            {lastScanResult.carDetected ? `PROCESSED: ${lastScanResult.licensePlate || 'VEHICLE'}` : 'PROCESSED: EMPTY'}
                         </div>
                     )}
 

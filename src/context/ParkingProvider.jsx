@@ -87,22 +87,35 @@ export const ParkingProvider = ({ children }) => {
         const slot = slots.find(s => s.slotId === slotId);
         if (!slot) return;
 
+        // Calculate fee
+        const entryTime = slot.entryTime || slot.bookingTime || new Date();
+        const durationMs = new Date() - new Date(entryTime);
+        const durationHours = Math.max(1, Math.ceil(durationMs / (1000 * 60 * 60)));
+        const amount = durationHours * (settings.hourlyRate || 20);
+
         await fetch(`${API_BASE}/api/slots/${slotId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'available', plateNumber: null, entryTime: null, bookingTime: null })
+            body: JSON.stringify({ status: 'available', plateNumber: null, entryTime: null, bookingTime: null, bookingDuration: 0 })
         });
 
-        const durationMins = slot.entryTime
-          ? Math.floor((new Date() - new Date(slot.entryTime)) / 60000)
-          : 0;
         await fetch(`${API_BASE}/api/logs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ event: 'SENSOR: EXIT', plateNumber: slot.plateNumber, slotId, details: `Duration: ${durationMins} mins` })
+            body: JSON.stringify({ 
+              event: 'SENSOR: EXIT', 
+              plateNumber: slot.plateNumber, 
+              slotId, 
+              amount: amount,
+              details: `Stay duration: ${durationHours}h. Total Fee: ₹${amount}` 
+            })
         });
         fetchStatus();
-    } catch (e) { console.error('Error simulating departure:', e); }
+        return { success: true, amount };
+    } catch (e) { 
+        console.error('Error simulating departure:', e); 
+        throw e;
+    }
   };
 
   const simulateBadParking = async (slotId, plateNumber) => {
@@ -121,17 +134,27 @@ export const ParkingProvider = ({ children }) => {
     } catch (e) { console.error('Error simulating bad parking:', e); }
   };
 
-  const bookSlot = async (slotId, plateNumber) => {
+  const bookSlot = async (slotId, plateNumber, duration = 1) => {
      try {
         await fetch(`${API_BASE}/api/slots/${slotId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'booked', plateNumber, bookingTime: new Date() })
+            body: JSON.stringify({ 
+              status: 'booked', 
+              plateNumber, 
+              bookingTime: new Date(),
+              bookingDuration: parseInt(duration)
+            })
         });
         await fetch(`${API_BASE}/api/logs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ event: 'USER: BOOKING', plateNumber, slotId, details: 'Reserved remotely' })
+            body: JSON.stringify({ 
+              event: 'USER: BOOKING', 
+              plateNumber, 
+              slotId, 
+              details: `Reserved for ${duration} hours` 
+            })
         });
         fetchStatus();
     } catch (e) { console.error('Error booking slot:', e); }

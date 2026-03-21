@@ -13,6 +13,7 @@ import VisionMonitor from './VisionMonitor';
 import { Camera, Car, UploadCloud, Settings as SettingsIcon, LogIn, LogOut, User, Menu, X, Cpu } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
 import { useParking } from '../context/ParkingProvider';
+import logo from '../assets/logo.png';
 
 const DashboardLayout = () => {
   const { activeFilter, setActiveFilter } = useParking();
@@ -42,30 +43,54 @@ const DashboardLayout = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '1rem 2rem',
+          padding: '1.25rem 2.5rem',
           borderRadius: '0',
           borderTop: '0', borderLeft: '0', borderRight: '0',
+          borderBottom: '1px solid rgba(99, 102, 241, 0.3)',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(99, 102, 241, 0.1)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8))',
           position: 'sticky',
           top: 0,
           zIndex: 50,
           marginBottom: '2rem',
           flexWrap: 'wrap',
-          gap: '0.75rem',
+          gap: '1rem',
         }}
       >
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-hover))',
-            padding: '8px', borderRadius: '12px',
-            boxShadow: '0 4px 15px var(--accent-glow)',
+            background: 'rgba(99, 102, 241, 0.1)',
+            padding: '4px', borderRadius: '14px',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.2)',
             flexShrink: 0,
+            overflow: 'hidden',
+            width: '42px', height: '42px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            <Camera size={22} color="white" />
+            <img src={logo} alt="SmartPark AI Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div>
-            <h2 className="nav-brand-title" style={{ fontSize: '1.15rem', lineHeight: 1 }}>SmartPark AI</h2>
-            <span className="hero-subtitle text-xs text-secondary">Live Automated View</span>
+            <h2 className="nav-brand-title" style={{ 
+              fontSize: '1.3rem', 
+              lineHeight: 1, 
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              textShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
+              letterSpacing: '-0.01em'
+            }}>SmartPark AI</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+              <span style={{ 
+                width: '6px', height: '6px', borderRadius: '50%', background: '#34d399',
+                boxShadow: '0 0 8px #34d399',
+                animation: 'pulse 2s infinite ease-in-out'
+              }}></span>
+              <span className="hero-subtitle text-xs text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '500' }}>
+                Live Automated View
+              </span>
+            </div>
           </div>
         </div>
 
@@ -88,6 +113,10 @@ const DashboardLayout = () => {
                 style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}>
                 <UploadCloud size={15} style={{ marginRight: '5px' }} /> Upload AI
               </button>
+              <button className="btn" onClick={() => setIsSimOpen(true)}
+                style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}>
+                <Cpu size={16} style={{ marginRight: '6px' }} /> Virtual Simulator
+              </button>
             </>
           )}
 
@@ -109,11 +138,6 @@ const DashboardLayout = () => {
               <LogIn size={15} style={{ marginRight: '6px' }} /> Login
             </button>
           )}
-
-          <button className="btn" onClick={() => setIsSimOpen(true)}
-            style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}>
-            <Cpu size={16} style={{ marginRight: '6px' }} /> Virtual Simulator
-          </button>
 
           <button className="btn btn-primary" onClick={() => setIsBookingOpen(true)}>
             <Car size={16} style={{ marginRight: '6px' }} /> Reserve a Slot
@@ -208,7 +232,6 @@ const DashboardLayout = () => {
         }
       `}</style>
 
-      {isSimOpen && <SimulationPanel onClose={() => setIsSimOpen(false)} />}
       <Notifications />
     </div>
   );

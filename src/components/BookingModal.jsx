@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import { useParking } from '../context/ParkingProvider';
+import { useNotifications } from './NotificationPortal';
 import { X } from 'lucide-react';
 
 const BookingModal = ({ onClose }) => {
   const { slots, bookSlot } = useParking();
+  const { showToast } = useNotifications();
   const [plate, setPlate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [duration, setDuration] = useState('1');
 
   const availableSlots = slots.filter(s => s.status === 'available');
 
-  const handleBooking = (e) => {
+  const handleBooking = async (e) => {
     e.preventDefault();
     if (plate && selectedSlot) {
-      bookSlot(selectedSlot, plate);
-      onClose();
+      try {
+        await bookSlot(selectedSlot, plate, duration);
+        showToast(`Slot ${selectedSlot} reserved successfully`, 'success');
+        onClose();
+      } catch (err) {
+        showToast('Failed to reserve slot', 'error');
+      }
     }
   };
 

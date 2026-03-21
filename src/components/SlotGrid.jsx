@@ -47,86 +47,164 @@ const SlotGrid = () => {
       }
    };
 
-   const SlotCard = React.memo(({ slot, index }) => {
-      const isLeft = index % 2 === 0;
+   const ResidencyTimer = ({ startTime, status, duration }) => {
+      const [elapsed, setElapsed] = React.useState('');
+
+      React.useEffect(() => {
+         if (!startTime) return;
+         const update = () => {
+            const start = new Date(startTime);
+            const now = new Date();
+            const diffMs = now - start;
+
+            if (status === 'booked') {
+               const totalMinutes = (duration || 1) * 60;
+               const elapsedMinutes = Math.floor(diffMs / 60000);
+               const remaining = Math.max(0, totalMinutes - elapsedMinutes);
+               if (remaining <= 0) {
+                  setElapsed('Expired');
+                  return;
+               }
+               const h = Math.floor(remaining / 60);
+               const m = remaining % 60;
+               setElapsed(`${h}h ${m}m left`);
+               return;
+            }
+
+            const diffMins = Math.floor(diffMs / 60000);
+            const h = Math.floor(diffMins / 60);
+            const m = diffMins % 60;
+            setElapsed(h > 0 ? `${h}h ${m}m` : `${m}m`);
+         };
+         update();
+         const interval = setInterval(update, 60000);
+         return () => clearInterval(interval);
+      }, [startTime, status, duration]);
+
       return (
-      <motion.div
-         key={slot.slotId}
-         layout
-         variants={cardVariants}
-         initial="hidden"
-         animate="visible"
-         exit="exit"
-         transition={{ layout: { type: 'spring', stiffness: 200, damping: 22 } }}
-         className="slot-card"
-         style={{
-            position: 'relative',
-            height: '260px',
-            background: slot.status !== 'available' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.01)',
-            borderLeft: !isLeft ? '3px solid rgba(255,255,255,0.8)' : 'none',
-            borderRight: isLeft ? '3px solid rgba(255,255,255,0.8)' : 'none',
-            marginBottom: '0', // Margin handled by grid gap now
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '4px',
-            boxShadow: slot.status !== 'available'
-               ? `inset 0 0 20px ${getStatusColor(slot.status)}11`
-               : 'none',
-         }}
-      >
-         {/* Slot content */}
-         <div style={{ textAlign: 'center' }}>
-            {slot.status === 'available' ? (
-               <h2 style={{
-                  fontSize: 'clamp(1.5rem, 4vw, 3rem)',
-                  fontWeight: '900',
-                  margin: 0,
-                  color: 'rgba(255,255,255,0.12)',
-                  letterSpacing: '0.2em',
-               }}>EMPTY</h2>
-            ) : (
-               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                  <Car
-                     size={48}
-                     color={getStatusColor(slot.status)}
-                     style={{ filter: `drop-shadow(0 0 12px ${getStatusColor(slot.status)}44)` }}
-                  />
-                  <div style={{
-                     background: 'rgba(0,0,0,0.5)',
-                     padding: '0.3rem 0.75rem',
-                     borderRadius: '4px',
-                     border: `1px solid ${getStatusColor(slot.status)}44`,
-                     color: '#fff',
-                     fontSize: 'clamp(0.7rem, 2vw, 1rem)',
-                     fontWeight: '700',
-                     fontFamily: 'monospace',
-                  }}>
-                     {slot.plateNumber}
-                  </div>
+         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{
+               fontSize: '0.75rem',
+               color: 'var(--text-muted)',
+               marginTop: '4px',
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               gap: '4px',
+               width: '100%',
+               fontFamily: 'sans-serif'
+            }}>
+               <span style={{
+                  width: '6px', height: '6px', borderRadius: '50%',
+                  background: status === 'available' ? 'var(--status-available)' :
+                     status === 'occupied' ? 'var(--status-occupied)' :
+                        status === 'booked' ? 'var(--status-booked)' : 'var(--status-fined)',
+                  opacity: 0.8
+               }}></span>
+               {status === 'booked' ? 'Reserved: ' : 'Parked: '} {elapsed}
+            </div>
+            {status !== 'available' && status !== 'booked' && (
+               <div style={{
+                  fontSize: '0.7rem',
+                  fontWeight: '800',
+                  color: 'var(--accent-primary)',
+                  marginTop: '0.35rem',
+                  fontFamily: 'monospace',
+                  padding: '2px 8px',
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(99, 102, 241, 0.2)'
+               }}>
+                  CURR. FEE: ₹{Math.max(1, Math.ceil((new Date() - new Date(startTime)) / (1000 * 60 * 60))) * 20}
                </div>
             )}
          </div>
+      );
+   };
 
-         {/* Slot ID badge */}
-         <div style={{
-            position: 'absolute',
-            top: '10px',
-            [isLeft ? 'left' : 'right']: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            opacity: 0.85,
-         }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: '900', color: '#fff' }}>{slot.slotId}</span>
+   const SlotCard = React.memo(({ slot, index }) => {
+      const isLeft = index % 2 === 0;
+      return (
+         <motion.div
+            key={slot.slotId}
+            layout
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ layout: { type: 'spring', stiffness: 200, damping: 22 } }}
+            className="slot-card"
+            style={{
+               position: 'relative',
+               height: '260px',
+               background: slot.status !== 'available' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.01)',
+               borderLeft: !isLeft ? '3px solid rgba(255,255,255,0.8)' : 'none',
+               borderRight: isLeft ? '3px solid rgba(255,255,255,0.8)' : 'none',
+               marginBottom: '0',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center',
+               alignItems: 'center',
+               borderRadius: '4px',
+            }}
+         >
+            {/* Slot content */}
+            <div style={{ textAlign: 'center' }}>
+               {slot.status === 'available' ? (
+                  <h2 style={{
+                     fontSize: 'clamp(1.5rem, 4vw, 3rem)',
+                     fontWeight: '900',
+                     margin: 0,
+                     color: 'rgba(255,255,255,0.12)',
+                     letterSpacing: '0.2em',
+                  }}>EMPTY</h2>
+               ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                     <Car
+                        size={48}
+                        color={getStatusColor(slot.status)}
+                        style={{ filter: `drop-shadow(0 0 12px ${getStatusColor(slot.status)}44)` }}
+                     />
+                     <div style={{
+                        background: 'rgba(0,0,0,0.5)',
+                        padding: '0.3rem 0.75rem',
+                        borderRadius: '4px',
+                        border: `1px solid ${getStatusColor(slot.status)}44`,
+                        color: '#fff',
+                        fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
+                        fontWeight: '700',
+                        fontFamily: 'monospace',
+                     }}>
+                        {slot.plateNumber}
+                     </div>
+                     {(slot.status === 'occupied' || slot.status === 'fined') && (
+                        <ResidencyTimer startTime={slot.entryTime} status={slot.status} />
+                     )}
+                     {slot.status === 'booked' && (
+                        <ResidencyTimer startTime={slot.bookingTime} status="booked" duration={slot.bookingDuration} />
+                     )}
+                  </div>
+               )}
+            </div>
+
+            {/* Slot ID badge */}
             <div style={{
-               width: '8px', height: '8px', borderRadius: '50%',
-               background: getStatusColor(slot.status),
-               boxShadow: `0 0 8px ${getStatusColor(slot.status)}`,
-            }} />
-         </div>
-      </motion.div>
+               position: 'absolute',
+               top: '10px',
+               [isLeft ? 'left' : 'right']: '10px',
+               display: 'flex',
+               alignItems: 'center',
+               gap: '6px',
+               opacity: 0.85,
+            }}>
+               <span style={{ fontSize: '0.9rem', fontWeight: '900', color: '#fff' }}>{slot.slotId}</span>
+               <div style={{
+                  width: '8px', height: '8px', borderRadius: '50%',
+                  background: getStatusColor(slot.status),
+                  boxShadow: `0 0 8px ${getStatusColor(slot.status)}`,
+               }} />
+            </div>
+         </motion.div>
       );
    });
 
@@ -149,8 +227,8 @@ const SlotGrid = () => {
                display: grid;
                grid-template-columns: 1fr 1fr;
                column-gap: clamp(40px, 8vw, 80px);
-               row-gap: 1rem;
-               max-width: 960px;
+               row-gap: 2.5rem;
+               max-width: 1100px;
                margin: 0 auto;
                width: 100%;
                position: relative;
