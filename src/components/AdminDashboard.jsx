@@ -151,7 +151,8 @@ const AdminDashboard = ({ onClose }) => {
         {/* Scrollable Content Area */}
         <div style={{ maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>
           {activeTab === 'settings' ? (
-            <form onSubmit={handleSave}>
+            <>
+              <form onSubmit={handleSave}>
               <div className="form-group" style={{ marginBottom: '1.25rem' }}>
                 <label className="form-label">Total Parking Slots</label>
                 <input type="number" min="1" max="100" className="form-input"
@@ -233,7 +234,33 @@ const AdminDashboard = ({ onClose }) => {
                 </button>
               </div>
             </form>
-          ) : (
+            
+            <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '1rem' }}>
+              <h4 style={{ fontSize: '0.85rem', color: 'var(--status-available)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Mobile Scanner Sync</h4>
+              <p className="text-xs text-secondary" style={{ marginBottom: '1rem' }}>Use your smartphone as a high-precision sensor if the hardware fails.</p>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <input 
+                  type="text" 
+                  readOnly 
+                  className="form-input" 
+                  style={{ fontSize: '0.7rem', background: 'rgba(0,0,0,0.2)' }}
+                  value={`${window.location.origin}/scan`} 
+                />
+                <button 
+                  className="btn btn-primary" 
+                  style={{ fontSize: '0.75rem', background: 'var(--status-available)', borderColor: 'var(--status-available)' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/scan`);
+                    showToast('Sync link copied!', 'success');
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
+              <p className="text-xs text-muted" style={{ marginTop: '0.5rem' }}>Open this URL on your mobile browser to start scanning.</p>
+            </div>
+          </>
+        ) : (
             <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
               <p className="text-sm text-secondary" style={{ marginBottom: '1.25rem' }}>
                 Promote users to Admin or remove privileges. The default 'admin' account cannot be modified.
@@ -284,30 +311,6 @@ const AdminDashboard = ({ onClose }) => {
             </div>
           )}
 
-          <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '1rem' }}>
-            <h4 style={{ fontSize: '0.85rem', color: 'var(--status-available)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Mobile Scanner Sync</h4>
-            <p className="text-xs text-secondary" style={{ marginBottom: '1rem' }}>Use your smartphone as a high-precision sensor if the hardware fails.</p>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <input 
-                type="text" 
-                readOnly 
-                className="form-input" 
-                style={{ fontSize: '0.7rem', background: 'rgba(0,0,0,0.2)' }}
-                value={`${window.location.origin}/scan`} 
-              />
-              <button 
-                className="btn btn-primary" 
-                style={{ fontSize: '0.75rem', background: 'var(--status-available)', borderColor: 'var(--status-available)' }}
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/scan`);
-                  showToast('Sync link copied!', 'success');
-                }}
-              >
-                Copy Link
-              </button>
-            </div>
-            <p className="text-xs text-muted" style={{ marginTop: '0.5rem' }}>Open this URL on your mobile browser to start scanning.</p>
-          </div>
         </div>
       </div>
     </div>
