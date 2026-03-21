@@ -12,6 +12,7 @@ const AdminDashboard = ({ onClose }) => {
   const [totalSlots, setTotalSlots] = useState(settings?.totalSlots || 12);
   const [fineAmount, setFineAmount] = useState(settings?.fineAmount || 50);
   const [hourlyRate, setHourlyRate] = useState(settings?.hourlyRate || 20);
+  const [streamUrl, setStreamUrl] = useState(settings?.streamUrl || '');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [initialized, setInitialized] = useState(false);
@@ -25,6 +26,7 @@ const AdminDashboard = ({ onClose }) => {
       if (settings.totalSlots !== undefined) setTotalSlots(settings.totalSlots);
       if (settings.fineAmount !== undefined) setFineAmount(settings.fineAmount);
       if (settings.hourlyRate !== undefined) setHourlyRate(settings.hourlyRate);
+      if (settings.streamUrl !== undefined) setStreamUrl(settings.streamUrl);
       setInitialized(true);
     }
   }, [settings, initialized]);
@@ -94,6 +96,7 @@ const AdminDashboard = ({ onClose }) => {
           totalSlots: totalSlots !== '' ? Number(totalSlots) : settings.totalSlots,
           fineAmount: fineAmount !== '' ? Number(fineAmount) : settings.fineAmount,
           hourlyRate: hourlyRate !== '' ? Number(hourlyRate) : settings.hourlyRate,
+          streamUrl: streamUrl,
         })
       });
 
@@ -166,6 +169,15 @@ const AdminDashboard = ({ onClose }) => {
                 value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} required />
               <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
                 Calculated dynamically based on stay duration.
+              </p>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+              <label className="form-label">Hardware Stream URL (ESP32 / Mobile)</label>
+              <input type="url" className="form-input" placeholder="http://192.168.x.x:8080/video"
+                value={streamUrl} onChange={e => setStreamUrl(e.target.value)} />
+              <p className="text-xs text-muted" style={{ marginTop: '0.4rem' }}>
+                Enter the MJPEG stream URL from your ESP32 or an IP Cam app on your mobile.
               </p>
             </div>
 
@@ -269,6 +281,31 @@ const AdminDashboard = ({ onClose }) => {
             ))}
           </div>
         )}
+
+        <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '1rem' }}>
+          <h4 style={{ fontSize: '0.85rem', color: 'var(--status-available)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Mobile Scanner Sync</h4>
+          <p className="text-xs text-secondary" style={{ marginBottom: '1rem' }}>Use your smartphone as a high-precision sensor if the hardware fails.</p>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <input 
+              type="text" 
+              readOnly 
+              className="form-input" 
+              style={{ fontSize: '0.7rem', background: 'rgba(0,0,0,0.2)' }}
+              value={`${window.location.origin}/scan`} 
+            />
+            <button 
+              className="btn btn-primary" 
+              style={{ fontSize: '0.75rem', background: 'var(--status-available)', borderColor: 'var(--status-available)' }}
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/scan`);
+                showToast('Sync link copied!', 'success');
+              }}
+            >
+              Copy Link
+            </button>
+          </div>
+          <p className="text-xs text-muted" style={{ marginTop: '0.5rem' }}>Open this URL on your mobile browser to start scanning.</p>
+        </div>
       </div>
     </div>
   );
